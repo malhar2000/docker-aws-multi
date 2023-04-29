@@ -1,0 +1,35 @@
+sudo: required
+services:
+  - docker
+# Build test version of React project (client) ./client directory to look for Dockerfile.dev and build image
+before_install:
+  - docker build -t frontend-test -f ./client/Dockerfile.dev ./client
+
+# Run tests
+script:
+  - docker run -e CI=true frontend-test npm test
+ 
+after_success: 
+  - docker build -t complexfib-client ./client
+  - docker build -t complexfib-nginx ./nginx
+  - docker build -t complexfib-server ./server
+  - docker build -t complexfib-worker ./worker
+#   # Log in to the docker CLI
+#   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+#   # Take those images and push them to docker hub
+#   - docker push complexfib-client
+#   - docker push complexfib-nginx
+#   - docker push complexfib-server
+#   - docker push complexfib-worker
+
+# deploy:
+#   provider: elasticbeanstalk
+#   region: us-east-2
+#   app: complex-fib
+#   env: Complexfib-env
+#   bucket_name: elasticbeanstalk-us-east-2-123456789
+#   bucket_path: complex-fib
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
