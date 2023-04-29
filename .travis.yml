@@ -18,11 +18,17 @@ after_success:
   # | is a pipe, i.e. shift + \ on keyboard
   # echo part is taken and piped as input to the next command after | 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # need to tag images before pushing to docker hub
+  - docker tag complexfib-client $DOCKER_ID/complexfib-client
+  - docker tag complexfib-nginx $DOCKER_ID/complexfib-nginx
+  - docker tag complexfib-server $DOCKER_ID/complexfib-server
+  - docker tag complexfib-worker $DOCKER_ID/complexfib-worker
+
   # Take those images and push them to docker hub
-  - docker push complexfib-client
-  - docker push complexfib-nginx
-  - docker push complexfib-server
-  - docker push complexfib-worker
+  - docker push $DOCKER_ID/complexfib-client
+  - docker push $DOCKER_ID/complexfib-nginx
+  - docker push $DOCKER_ID/complexfib-server
+  - docker push $DOCKER_ID/complexfib-worker
 
 # deploy:
 #   provider: elasticbeanstalk
